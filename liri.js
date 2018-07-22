@@ -47,7 +47,7 @@ switch(userCommand){
 };
 
 // funtion to pull latest tweets
-function getTweets(){
+function getTweets() {
   // var to pull in API key from keys file
   var client = new twitter(keys.twitter);
 
@@ -66,7 +66,7 @@ function getTweets(){
 
 
 // function to perform song pull request
-function getSong(songTitle){
+function getSong(songTitle) {
   // var to pull in API key from keys file
   var spotify = new Spotify(keys.spotify);
  
@@ -79,7 +79,7 @@ function getSong(songTitle){
 
   spotify.search({ type: 'track', query: songTitle }, function (err, data) {
     if (err) {
-        return console.log('Error occurred: ' + err);
+      return console.log(err);
     }
 
     // pulls the array of info for the first returned track
@@ -93,8 +93,8 @@ function getSong(songTitle){
   });
 };
 
-function getMovie(movieTitle){
 
+function getMovie(movieTitle) {
   // request taken in after command when user types in 'node liri.js [userCommand] [userRequest]'
   var movieTitle = process.argv[3];
 
@@ -108,7 +108,7 @@ function getMovie(movieTitle){
       // Parses the body of the site and recovers movie info.
       var movieInfo = JSON.parse(body);
 
-      var Results =
+      var results =
       "\n" +
       "Title: " + movieInfo.Title + 
       "\nYear: " + movieInfo.Year + 
@@ -119,8 +119,43 @@ function getMovie(movieTitle){
       "\nPlot: " + movieInfo.Plot + 
       "\nActors: " + movieInfo.Actors;
 
-      console.log(Results);
+      console.log(results);
     }
   });
 };
 
+
+function defaultRequest() {
+  // To read data from random.txt file
+  fs.readFile("random.txt", "utf8", function(err, data) {
+		if (err) {
+			return console.log(err);
+		} else {
+      // sets string in file to songTitle variable
+      var songTitle = data;
+      // runs Spotify function from above
+      getSong(songTitle);
+    };
+  });
+};
+
+// working on tying this last function up
+function log() {
+  this.newLogItem = function(command, response) {
+    var command = process.argv[1] && process.argv[2] && process.argv[3];
+    var response = console.log("test");
+    var logTxt =
+      "\nCommand: " +
+      "\n" + newLogItem.command +
+      "\n-----------------------------------------------\n" +
+      "\nResponse: " +
+      "\n" + newLogItem.response +
+      "\n-----------------------------------------------\n";
+
+    fs.appendFile("log.txt", logTxt, function(err) {
+      if (err) throw err;
+    });
+
+    newLogItem.getWeather();
+  };
+};
