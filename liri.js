@@ -46,29 +46,36 @@ switch(userCommand){
   break;
 };
 
+// funtion to pull latest tweets
 function getTweets(){
   // var to pull in API key from keys file
   var client = new twitter(keys.twitter);
 
   var params = {screen_name: 'backrowcoders', count: 20};
   client.get('statuses/user_timeline', params, function(error, tweets, response) {
-    if (!error) {
-      for(var i = 0; i<tweets.length; i++){
-        var date = tweets[i].created_at;
-        console.log(tweets[i].text);
-        console.log("-----------------------------------------------");
-      }
-    };
+    for (var i = 0; i < tweets.length; i++) {
+      console.log(" ");
+      console.log("@backrowcoders:")
+      console.log(tweets[i].text);
+      console.log(" ");
+      console.log(tweets[i].created_at);
+      console.log("\n-----------------------------------------------\n");
+      } 
   });
 };
 
 
+// function to perform song pull request
 function getSong(songTitle){
   // var to pull in API key from keys file
   var spotify = new Spotify(keys.spotify);
  
   // request taken in after command when user types in 'node liri.js [userCommand] [userRequest]'
   var songTitle = process.argv[3];
+  
+  if (!songTitle) {
+    songTitle = "The Sign";
+  };
 
   spotify.search({ type: 'track', query: songTitle }, function (err, data) {
     if (err) {
@@ -78,15 +85,42 @@ function getSong(songTitle){
     // pulls the array of info for the first returned track
     var songs = data.tracks.items[0];
 
-    // Console log Spotify
-    console.log("artist(s): " + songs.artists[0].name);
+    // prints Spotify track info
+    console.log("Artist(s): " + songs.artists[0].name);
     console.log("Song Title: " + songs.name);
-    console.log("Preview Song: " + songs.preview_url);
+    console.log("Preview URL: " + songs.preview_url);
     console.log("Album: " + songs.album.name);
-    console.log("-----------------------------------------------");
-
   });
 };
 
+function getMovie(movieTitle){
 
+  // request taken in after command when user types in 'node liri.js [userCommand] [userRequest]'
+  var movieTitle = process.argv[3];
+
+  // Runs a request to the OMDB API with the movie specified.
+  var queryUrl = "http://www.omdbapi.com/?t=" + movieTitle + "&y=&plot=short&apikey=trilogy";
+
+  request(queryUrl, function(error, response, body) {
+    // If the request is successful...
+    if (!error && response.statusCode === 200) {
+      
+      // Parses the body of the site and recovers movie info.
+      var movieInfo = JSON.parse(body);
+
+      var Results =
+      "\n" +
+      "Title: " + movieInfo.Title + 
+      "\nYear: " + movieInfo.Year + 
+      "\nIMDB Rating: " + movieInfo.Ratings[0].Value + 
+      "\nRotten Tomatoes Rating: " + movieInfo.Ratings[1].Value + 
+      "\nOrigin Country: " + movieInfo.Country + 
+      "\nLanguage: " + movieInfo.Language + 
+      "\nPlot: " + movieInfo.Plot + 
+      "\nActors: " + movieInfo.Actors;
+
+      console.log(Results);
+    }
+  });
+};
 
